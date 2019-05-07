@@ -4,7 +4,9 @@
   "description": "simple-api",
   "main": "index.js",
   "scripts": {
-    "test": "cd spec && mocha --require ts-node/register *.ts"
+    "test": "cd spec && mocha --require ts-node/register *.ts",
+    "build": "rm -rf dist/; tsc --outDir dist/ && cp -R src/config.yaml src/version.json src/schemas dist/ && cp -R src/scripts/** dist/scripts",
+    "bundle": "rm -f dist.zip; zip -r dist.zip node_modules/* && cd dist/ && zip -ur ../dist.zip *"
   },
   "repository": {
     "type": "git",
