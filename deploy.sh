@@ -13,7 +13,11 @@ npm dedupe
 npm run bundle
 # Copy packaged app to S3
 aws s3 cp dist.zip s3://$S3_BUCKET/$API_NAME/$API_NAME.zip --quiet
+# Pull environment specific config from S3
+aws s3 cp s3://$S3_BUCKET/configs/$API_NAME.dev.env $API_NAME.dev.env
 
+# Replace S3 folder and filename placeholders sam-api-template
+sed -i 's/${API_NAME}/'"$API_NAME"'/g; s/${CI_PIPELINE_ID}/'"$CI_PIPELINE_ID"'/g' sam-api-template.yml
 sam deploy --template-file sam-ddb-template.yml --stack-name table-stack --no-fail-on-empty-changeset
 
-sam deploy --template-file sam-api-template.yml --stack-name API-$API_NAME --capabilities CAPABILITY_IAM  --parameter-overrides $(cat secrets.dev.env) --no-fail-on-empty-changeset
+sam deploy --template-file sam-api-template.yml --stack-name API-$API_NAME --capabilities CAPABILITY_IAM  --parameter-overrides $(cat $API_NAME.dev.env) --no-fail-on-empty-changeset
