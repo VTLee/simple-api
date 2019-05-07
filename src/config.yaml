@@ -1,0 +1,53 @@
+import:
+    - configurapi-handler-json
+    - configurapi-handler-http
+    - configurapi-handler-logging
+api:
+    events:
+        - name: on_error
+          policies:
+            - providerLimitHandler
+        - name: on_before_request
+          policies:
+            - logRequestHandler:
+              - ['token', 'value']
+        - name: on_after_request
+          policies:
+            - logResponseHandler:
+              - ['token', 'value']
+        - name: options
+          policies:
+            - setResponseStatusCodeHandler:
+              - 204
+        - name: ""
+          policies:
+            - setResponseHandler:
+              - 204
+        - name: post_v1_token
+          policies:
+            - validateJsonRequestHandler
+            - createTokenHandler
+        - name: post_v1_validate
+          policies:
+            - validateJsonRequestHandler
+            - validateTokenHandler
+        - name: get_v1_identity
+          policies:
+            - authenticationHandler
+            - authorizationHandler
+            - getIdentityHandler
+        - name: list_v1_identities
+          policies:
+            - authenticationHandler
+            - authorizationHandler
+            - listIdentitiesHandler
+        - name: put_v1_identity_merge
+          policies:
+            - authenticationHandler
+            - authorizationHandler
+            - mergeIdentityHandler
+        - name: delete_v1_identity
+          policies:
+            - authenticationHandler
+            - authorizationHandler
+            - deleteIdentityHandler

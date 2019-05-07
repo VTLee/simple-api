@@ -1,0 +1,43 @@
+Transform: 'AWS::Serverless-2016-10-31'
+
+Resources:
+
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties: 
+      TableName: vacr-identities-2
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: 
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: primaryId
+          AttributeType: S
+        - AttributeName: secondaryId
+          AttributeType: S
+      KeySchema: 
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: primaryId-index
+          KeySchema: 
+            - AttributeName: primaryId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: secondaryId-index
+          KeySchema: 
+            - AttributeName: secondaryId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+            
+Outputs:
+  TableName:
+    Description: Information about the value
+    Value:  !Ref DynamoDBTable
+    Export:
+      Name: !Join [ "-", [ !Ref "AWS::StackName", table ] ]
+

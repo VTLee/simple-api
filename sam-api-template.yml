@@ -1,0 +1,113 @@
+Transform: 'AWS::Serverless-2016-10-31'
+
+Parameters: 
+  AUTHNAPIJWTSECRET: 
+      Type: String
+  ENTITLEMENTAPIBASEURL: 
+      Type: String
+  USERAPIBASEURL:
+      Type: String
+  AUTHNAPICOGNITOFEDERATEDPOOLID:
+      Type: String
+  AUTHNAPIAADREPLYURLS:
+      Type: String
+  AUTHNAPIAADCLIENTID:
+      Type: String
+  AUTHNAPIAPPCLIENTSECRET:
+      Type: String
+  AUTHENTICATIONAPISERVICETOKEN:
+      Type: String
+  CERTIFICATEARN:
+      Type: String
+  AUTHENTICATIONAPIBASEURL:
+      Type: String
+  APIDOMAINNAME:
+      Type: String
+
+
+Resources:
+
+  ApiGateway:
+    Type: 'AWS::Serverless::Api'
+    Properties:
+      StageName: default
+  
+  DomainName:
+    Type: 'AWS::ApiGateway::DomainName'
+    Properties:
+      RegionalCertificateArn: !Ref CERTIFICATEARN
+      DomainName: !Ref APIDOMAINNAME
+      EndpointConfiguration: 
+        Types:
+          - REGIONAL
+  
+  BasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref DomainName
+      RestApiId: !Ref ApiGateway
+      Stage: !Ref ApiGateway.Stage
+      BasePath: (none)
+
+  AuthenticationApiFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: API-authentication
+      Handler: node_modules/configurapi-runner-lambda-api/src/index.handler
+      Runtime: nodejs8.10
+      CodeUri: s3://cyber-range-dist/${API_NAME}/${CI_PIPELINE_ID}.zip
+      MemorySize: 1024
+      Timeout: 60
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !ImportValue DDB-identities-2-table  
+      Environment:
+        Variables:
+          AUTHENTICATION_API_DATA_PROVIDER: aws
+          TABLE_NAME_IDENTITIES: "-identities-2"
+          AUTHN_API_JWT_SECRET: !Ref AUTHNAPIJWTSECRET
+          ENTITLEMENT_API_BASE_URL: !Ref ENTITLEMENTAPIBASEURL 
+          USER_API_BASE_URL: !Ref USERAPIBASEURL
+          AUTHN_API_COGNITO_FEDERATED_POOL_ID: !Ref AUTHNAPICOGNITOFEDERATEDPOOLID
+          AUTHN_API_AAD_REPLY_URLS: !Ref AUTHNAPIAADREPLYURLS
+          AUTHN_API_AAD_CLIENT_ID: !Ref AUTHNAPIAADCLIENTID
+          AUTHN_API_APP_CLIENT_SECRET: !Ref AUTHNAPIAPPCLIENTSECRET
+          AUTHENTICATION_API_SERVICE_TOKEN: !Ref AUTHENTICATIONAPISERVICETOKEN
+          AUTHENTICATION_API_BASE_URL: !Ref AUTHENTICATIONAPIBASEURL
+      Events:
+        AnyRequest:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref ApiGateway
+        AnySubRequest:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref ApiGateway
+  
+  Logging:
+    Type: AWS::Logs::LogGroup
+    DependsOn: AuthenticationApiFunction
+    Properties: 
+      LogGroupName: !Join [/,["/aws/lambda", !Ref AuthenticationApiFunction ]]
+      RetentionInDays: 60
+
+Outputs:
+  DomainName:
+    Description: Domain Name of API
+    Value:  !Ref DomainName
+    Export:
+      Name: !Join [ "-", [ !Ref "AWS::StackName", domain ] ]
+  RestApiId:
+    Description: Id of API
+    Value:  !Ref ApiGateway
+    Export:
+      Name: !Join [ "-", [ !Ref "AWS::StackName", api-id ] ]
+  RestApiStage:
+    Description: Stage of API
+    Value:  default
+    Export:
+      Name: !Join [ "-", [ !Ref "AWS::StackName", api-stage ] ]
