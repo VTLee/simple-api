@@ -1,4 +1,4 @@
-export TEMP_CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam:::role/cicd --role-session-name simple-api-deploy-session)
+export TEMP_CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::712995907128:role/cicd --role-session-name simple-api-deploy-session)
 export AWS_ACCESS_KEY_ID=$(echo ${TEMP_CREDENTIALS} | jq -r .Credentials.AccessKeyId)
 export AWS_SECRET_ACCESS_KEY=$(echo ${TEMP_CREDENTIALS} | jq -r .Credentials.SecretAccessKey)
 export AWS_SESSION_TOKEN=$(echo ${TEMP_CREDENTIALS} | jq -r .Credentials.SessionToken)
@@ -7,6 +7,7 @@ export API_NAME='simple-api'
 export S3_BUCKET='leemdoughty-lambda-bucket'
 
 # Package app into dist.zip
+npm install
 npm run build
 npm prune --production
 npm dedupe

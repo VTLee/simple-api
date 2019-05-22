@@ -1,29 +1,10 @@
 Transform: 'AWS::Serverless-2016-10-31'
 
 Parameters: 
-  AUTHNAPIJWTSECRET: 
-      Type: String
-  ENTITLEMENTAPIBASEURL: 
-      Type: String
-  USERAPIBASEURL:
-      Type: String
-  AUTHNAPICOGNITOFEDERATEDPOOLID:
-      Type: String
-  AUTHNAPIAADREPLYURLS:
-      Type: String
-  AUTHNAPIAADCLIENTID:
-      Type: String
-  AUTHNAPIAPPCLIENTSECRET:
-      Type: String
-  AUTHENTICATIONAPISERVICETOKEN:
-      Type: String
   CERTIFICATEARN:
-      Type: String
-  AUTHENTICATIONAPIBASEURL:
       Type: String
   APIDOMAINNAME:
       Type: String
-
 
 Resources:
 
@@ -49,31 +30,22 @@ Resources:
       Stage: !Ref ApiGateway.Stage
       BasePath: (none)
 
-  AuthenticationApiFunction:
+  ApiFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName: API-authentication
       Handler: node_modules/configurapi-runner-lambda-api/src/index.handler
       Runtime: nodejs8.10
-      CodeUri: s3://cyber-range-dist/${API_NAME}/${CI_PIPELINE_ID}.zip
+      CodeUri: s3://cyber-range-dist/simple-api/latest.zip
       MemorySize: 1024
       Timeout: 60
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !ImportValue DDB-identities-2-table  
+            TableName: !ImportValue sam-table-name-export
       Environment:
         Variables:
-          AUTHENTICATION_API_DATA_PROVIDER: aws
-          TABLE_NAME_IDENTITIES: "-identities-2"
-          AUTHN_API_JWT_SECRET: !Ref AUTHNAPIJWTSECRET
-          ENTITLEMENT_API_BASE_URL: !Ref ENTITLEMENTAPIBASEURL 
-          USER_API_BASE_URL: !Ref USERAPIBASEURL
-          AUTHN_API_COGNITO_FEDERATED_POOL_ID: !Ref AUTHNAPICOGNITOFEDERATEDPOOLID
-          AUTHN_API_AAD_REPLY_URLS: !Ref AUTHNAPIAADREPLYURLS
-          AUTHN_API_AAD_CLIENT_ID: !Ref AUTHNAPIAADCLIENTID
-          AUTHN_API_APP_CLIENT_SECRET: !Ref AUTHNAPIAPPCLIENTSECRET
-          AUTHENTICATION_API_SERVICE_TOKEN: !Ref AUTHENTICATIONAPISERVICETOKEN
-          AUTHENTICATION_API_BASE_URL: !Ref AUTHENTICATIONAPIBASEURL
+          EXAMPLE: !Ref APIDOMAINNAME
+          EXAMPLE2: !ImportValue sam-table-name-export
       Events:
         AnyRequest:
           Type: Api
@@ -90,9 +62,9 @@ Resources:
   
   Logging:
     Type: AWS::Logs::LogGroup
-    DependsOn: AuthenticationApiFunction
+    DependsOn: ApiFunction
     Properties: 
-      LogGroupName: !Join [/,["/aws/lambda", !Ref AuthenticationApiFunction ]]
+      LogGroupName: !Join [/,["/aws/lambda", !Ref ApiFunction ]]
       RetentionInDays: 60
 
 Outputs:
