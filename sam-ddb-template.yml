@@ -2,42 +2,40 @@ Transform: 'AWS::Serverless-2016-10-31'
 
 Resources:
 
-  DynamoDBTable:
+  DynamoDBTable1:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
-    Properties: 
-      TableName: vacr-identities-2
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: 'table-name-one'
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions: 
+      AttributeDefinitions:
+        - AttributeName: hash
+          AttributeType: S
+        - AttributeName: range
+          AttributeType: S
         - AttributeName: id
           AttributeType: S
-        - AttributeName: primaryId
-          AttributeType: S
-        - AttributeName: secondaryId
-          AttributeType: S
-      KeySchema: 
-        - AttributeName: id
+      KeySchema:
+        - AttributeName: hash
           KeyType: HASH
+        - AttributeName: range
+          KeyType: RANGE
       GlobalSecondaryIndexes:
-        - IndexName: primaryId-index
-          KeySchema: 
-            - AttributeName: primaryId
+        - IndexName: id-index
+          KeySchema:
+            - AttributeName: id
               KeyType: HASH
           Projection:
             ProjectionType: ALL
-        - IndexName: secondaryId-index
-          KeySchema: 
-            - AttributeName: secondaryId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
+
             
 Outputs:
   TableName:
-    Description: Information about the value
-    Value:  !Ref DynamoDBTable
-    Export:
-      Name: !Join [ "-", [ !Ref "AWS::StackName", table ] ]
+    Description: The first table
+    Value:  !Ref DynamoDBTable1
+    Export: # This is the name exported by this template and importable elsewhere
+      Name: sam-table-name-export
 
