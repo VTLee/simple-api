@@ -6,7 +6,7 @@ api:
     events:
         - name: on_error
           policies:
-            - providerLimitHandler
+            - onErrorHandler
         - name: on_before_request
           policies:
             - logRequestHandler:
@@ -23,31 +23,16 @@ api:
           policies:
             - setResponseHandler:
               - 204
-        - name: post_v1_token
+        - name: get_v1_test
+          policies:
+            - myTestHandler
+        - name: list_v1_test
+          policies:
+            - myTestHandler
+        - name: post_v1_shorturl
           policies:
             - validateJsonRequestHandler
-            - createTokenHandler
-        - name: post_v1_validate
+            - addEntryHandler
+        - name: delete_v1_shorturl
           policies:
-            - validateJsonRequestHandler
-            - validateTokenHandler
-        - name: get_v1_identity
-          policies:
-            - authenticationHandler
-            - authorizationHandler
-            - getIdentityHandler
-        - name: list_v1_identities
-          policies:
-            - authenticationHandler
-            - authorizationHandler
-            - listIdentitiesHandler
-        - name: put_v1_identity_merge
-          policies:
-            - authenticationHandler
-            - authorizationHandler
-            - mergeIdentityHandler
-        - name: delete_v1_identity
-          policies:
-            - authenticationHandler
-            - authorizationHandler
-            - deleteIdentityHandler
+            - deleteEntryHandler
