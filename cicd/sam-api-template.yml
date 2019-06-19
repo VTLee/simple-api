@@ -1,0 +1,97 @@
+Transform: 'AWS::Serverless-2016-10-31'
+
+Parameters: 
+  CERTIFICATEARN:
+      Type: String
+  APIDOMAINNAME:
+      Type: String
+  APIFUNCTIONNAME:
+      Type: String
+  S3CODEBUCKET:
+      Type: String
+  S3CODEKEY:
+      Type: String
+  LAMBDAMEMORY:
+      Type: Number
+  LAMBDATIMEOUT:
+      Type: Number
+
+Resources:
+
+  ApiGateway:
+    Type: 'AWS::Serverless::Api'
+    Properties:
+      StageName: default
+  
+  DomainName:
+    Type: 'AWS::ApiGateway::DomainName'
+    Properties:
+      RegionalCertificateArn: !Ref CERTIFICATEARN
+      DomainName: !Ref APIDOMAINNAME
+      EndpointConfiguration: 
+        Types:
+          - REGIONAL
+  
+  BasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref DomainName
+      RestApiId: !Ref ApiGateway
+      Stage: !Ref ApiGateway.Stage
+      BasePath: (none)
+
+  ApiFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: !Ref APIFUNCTIONNAME
+      Handler: node_modules/configurapi-runner-lambda-api/src/index.handler
+      Runtime: nodejs10.x
+      CodeUri:
+        Bucket: !Ref S3CODEBUCKET
+        Key: !Ref S3CODEKEY
+      MemorySize: !Ref LAMBDAMEMORY
+      Timeout: !Ref LAMBDATIMEOUT
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !ImportValue sam-table-name-export
+      Environment:
+        Variables:
+          EXAMPLE: !Ref APIDOMAINNAME
+          EXAMPLE2: !ImportValue sam-table-name-export
+      Events:
+        AnyRequest:
+          Type: Api
+          Properties:
+            Path: /
+            Method: GET
+            RestApiId: !Ref ApiGateway
+        AnySubRequest:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+            RestApiId: !Ref ApiGateway
+  
+  Logging:
+    Type: AWS::Logs::LogGroup
+    DependsOn: ApiFunction
+    Properties: 
+      LogGroupName: !Join [/,["/aws/lambda", !Ref ApiFunction ]]
+      RetentionInDays: 60
+
+Outputs:
+  DomainName:
+    Description: Domain Name of API
+    Value:  !Ref DomainName
+    Export:
+      Name: !Join [ "-", [ !Ref "AWS::StackName", domain ] ]
+  RestApiId:
+    Description: Id of API
+    Value:  !Ref ApiGateway
+    Export:
+      Name: !Join [ "-", [ !Ref "AWS::StackName", api-id ] ]
+  RestApiStage:
+    Description: Stage of API
+    Value:  default
+    Export:
+      Name: !Join [ "-", [ !Ref "AWS::StackName", api-stage ] ]

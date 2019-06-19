@@ -1,0 +1,36 @@
+Transform: 'AWS::Serverless-2016-10-31'
+
+Resources:
+
+  DynamoDBTable1:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: 'shortUrls'
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: shortUrl
+          AttributeType: S
+        - AttributeName: owner
+          AttributeType: S
+      KeySchema:
+        - AttributeName: shortUrl
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: owner-index
+          KeySchema:
+            - AttributeName: owner
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+
+Outputs:
+  TableName:
+    Description: The first table
+    Value:  !Ref DynamoDBTable1
+    Export: # This is the name exported by this template and importable elsewhere
+      Name: sam-table-name-export
+

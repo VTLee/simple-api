@@ -1,0 +1,13 @@
+{
+    "title": "Post a shortUrl request",
+    "type": "object",
+    "properties": {
+        "target": {
+            "type": "string",
+            "maxLength": 250,
+            "description": "The URL Target"
+        }
+    },
+    "required": ["target"],
+    "additionalProperties": false
+}

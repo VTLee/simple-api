@@ -62,3 +62,5 @@ typings/
 
 
 dist.zip
+dist/
+package-lock.json
