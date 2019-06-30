@@ -11,6 +11,7 @@ api:
           policies:
             - logRequestHandler:
               - ['token', 'value']
+            - checkForGetHandler
         - name: on_after_request
           policies:
             - logResponseHandler:

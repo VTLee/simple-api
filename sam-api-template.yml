@@ -5,6 +5,10 @@ Parameters:
       Type: String
   APIDOMAINNAME:
       Type: String
+  S3CODEBUCKET:
+      Type: String
+  S3CODEKEY:
+      Type: String
 
 Resources:
 
@@ -36,7 +40,9 @@ Resources:
       FunctionName: API-authentication
       Handler: node_modules/configurapi-runner-lambda-api/src/index.handler
       Runtime: nodejs8.10
-      CodeUri: s3://cyber-range-dist/simple-api/latest.zip
+      CodeUri:
+          Bucket: !Ref S3CODEBUCKET
+          Key: !Ref S3CODEKEY
       MemorySize: 1024
       Timeout: 60
       Policies:
