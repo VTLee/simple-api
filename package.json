@@ -6,8 +6,11 @@
   "scripts": {
     "test": "cd spec && mocha --require ts-node/register *.ts",
     "build": "rm -rf dist/; tsc --outDir dist/ && cp -R src/config.yaml src/version.json src/schemas dist/ && cp -R src/scripts/** dist/scripts",
-    "bundle": "rm -f dist.zip; zip -rq dist.zip node_modules/* && cd dist/ && zip -rqu ../dist.zip *"
+    "bundle": "rm -f dist.zip; zip -rq dist.zip node_modules/* && cd dist/ && zip -ur ../dist.zip *"
   },
+  "files": [
+    "src/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/VTLee/simple-api.git"
@@ -26,6 +29,7 @@
     "configurapi-handler-json": "^1.3.1",
     "configurapi-handler-logging": "^1.3.6",
     "configurapi-runner-lambda-api": "^1.0.4",
+    "nodenamo": "^0.8.0",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

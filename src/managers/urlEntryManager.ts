@@ -3,6 +3,8 @@ import UrlEntryProviderFactory from "../repository/providers/urlEntryProviderFac
 import UrlEntryRepository from "../repository/urlEntryRepository";
 import IUrlEntryManager from "../interfaces/iUrlEntryManager";
 import IUrlEntry from "../interfaces/iUrlEntry";
+import IUrlEntryFilter from "../interfaces/iUrlEntryFilter";
+import UrlEntryFilter from "../entities/urlEntryFilter";
 
 export default class UrlEntryManager implements IUrlEntryManager
 {
@@ -16,13 +18,20 @@ export default class UrlEntryManager implements IUrlEntryManager
     async add(urlEntry: IUrlEntry): Promise<void> {
         return await this.repository.add(urlEntry);
     }
+
+    async get(id: string): Promise<IUrlEntry> {
+        return await this.repository.get(id);
+    }
+
     async getByShortUrl(shortUrl: string): Promise<IUrlEntry> {
-        return await this.repository.getByShortUrl(shortUrl);
+        let filter : IUrlEntryFilter = new UrlEntryFilter({shortUrl: shortUrl})
+        return await this.repository.get(filter);
     }
     async getByOwner(ownerId: string): Promise<IUrlEntry[]> {
-        return await this.repository.getByOwner(ownerId);
+        let filter : IUrlEntryFilter = new UrlEntryFilter({owner: ownerId})
+        return await this.repository.get(filter);
     }
-    async delete(shortUrl: string): Promise<void> {
-        return await this.repository.delete(shortUrl);
+    async delete(id: string): Promise<void> {
+        return await this.repository.delete(id);
     }
 }

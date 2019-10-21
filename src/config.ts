@@ -14,6 +14,9 @@ export default class Config
 
     // Misc
     public static API_REQUEST_TIMEOUT_IN_MS:number = Number(process.env.API_REQUEST_TIMEOUT_IN_MS) || 3000;
+    static readonly DYNAMODB_MAX_RETRIES: number = Number(process.env.DYNAMODB_MAX_RETRIES) || 3;
+    static readonly DYNAMODB_CONNECT_TIMEOUT_IN_MS: number = Number(process.env.DYNAMODB_CONNECT_TIMEOUT_IN_MS) || 5000;
+    static readonly DYNAMODB_SOCKET_TIMEOUT_IN_MS: number = Number(process.env.DYNAMODB_SOCKET_TIMEOUT_IN_MS) || 7000;
 
 
 };

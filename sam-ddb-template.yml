@@ -1,13 +1,12 @@
 Transform: 'AWS::Serverless-2016-10-31'
 
 Resources:
-
-  DynamoDBTable1:
+  DynamoDBTable:
     Type: AWS::DynamoDB::Table
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
-      TableName: 'table-name-one'
+      TableName: 'table-name-nn-one'
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: true
       BillingMode: PAY_PER_REQUEST
@@ -16,7 +15,7 @@ Resources:
           AttributeType: S
         - AttributeName: range
           AttributeType: S
-        - AttributeName: id
+        - AttributeName: objid
           AttributeType: S
       KeySchema:
         - AttributeName: hash
@@ -24,18 +23,17 @@ Resources:
         - AttributeName: range
           KeyType: RANGE
       GlobalSecondaryIndexes:
-        - IndexName: id-index
+        - IndexName: objid-index
           KeySchema:
-            - AttributeName: id
+            - AttributeName: objid
               KeyType: HASH
           Projection:
             ProjectionType: ALL
-
             
 Outputs:
   TableName:
-    Description: The first table
-    Value:  !Ref DynamoDBTable1
+    Description: The table
+    Value:  !Ref DynamoDBTable
     Export: # This is the name exported by this template and importable elsewhere
-      Name: sam-table-name-export
+      Name: sam-table-name-export2
 

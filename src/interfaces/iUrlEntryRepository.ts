@@ -1,8 +1,10 @@
 import IUrlEntry from "./iUrlEntry";
+import IUrlEntryFilter from "./iUrlEntryFilter";
 
 export default interface IUrlEntryRepostiry {
     add(entry: IUrlEntry): Promise<void>;
-    getByShortUrl(shortUrl: string): Promise<IUrlEntry>;
-    getByOwner(ownerId: string): Promise<IUrlEntry[]>;
-    delete(shortUrl: string): Promise<void>;
+    getOne(id: string): Promise<IUrlEntry>;
+    get(filter?: IUrlEntryFilter): Promise<IUrlEntry[]>;
+    //update(entry: IUrlEntry): Promise<void>;
+    delete(id: string): Promise<void>;
 }

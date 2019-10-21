@@ -8,7 +8,7 @@ import UrlEntry from "../entities/urlEntry";
 
 async function main() {
     let uep : IUrlEntryProvider = UrlEntryProviderFactory.create("aws");
-    uep.add(new UrlEntry("https://www.ldoughty.com"))
+    uep.add(new UrlEntry())
 
 }
 

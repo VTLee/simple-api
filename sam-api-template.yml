@@ -9,7 +9,10 @@ Parameters:
       Type: String
   S3CODEKEY:
       Type: String
-
+  LAMBDAMEMORY:
+      Type: Number
+  LAMBDATIMEOUT:
+      Type: Number
 Resources:
 
   ApiGateway:
@@ -37,21 +40,21 @@ Resources:
   ApiFunction:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: API-authentication
+      FunctionName: simple-api
       Handler: node_modules/configurapi-runner-lambda-api/src/index.handler
-      Runtime: nodejs8.10
+      Runtime: nodejs10.x
       CodeUri:
           Bucket: !Ref S3CODEBUCKET
           Key: !Ref S3CODEKEY
-      MemorySize: 1024
-      Timeout: 60
+      MemorySize: !Ref LAMBDAMEMORY
+      Timeout: !Ref LAMBDATIMEOUT
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !ImportValue sam-table-name-export
+            TableName: !ImportValue sam-table-name-export2
       Environment:
         Variables:
           EXAMPLE: !Ref APIDOMAINNAME
-          EXAMPLE2: !ImportValue sam-table-name-export
+          TABLE_NAME: !ImportValue sam-table-name-export2
       Events:
         AnyRequest:
           Type: Api

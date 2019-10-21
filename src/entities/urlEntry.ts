@@ -4,26 +4,39 @@ import * as base32 from 'base32';
 var crypto = require('crypto');
 
 export default class UrlEntry implements IUrlEntry {
+    id: string;
     shortUrl: string;
+    owner: string;
+    target: string;
+    enabled: boolean;
     createdTimestamp: string;
     modifiedTimestamp: string;
-    enabled: boolean;
-    target: string;
-    owner: string;
 
-    constructor(target: string, owner: string = "undefined", shortUrl: string = UrlEntry.generateRandomBase32String(8), enabled: boolean = true) {
-        this.target = target;
+    constructor({
+        id,
+        shortUrl,
+        owner,
+        target,
+        enabled,
+        createdTimestamp,
+        modifiedTimestamp
+    }: {
+        id?: string, shortUrl?: string, owner?: string, target?: string,
+        enabled?: boolean, createdTimestamp?: string, modifiedTimestamp?: string
+    } = {}) {
+        this.id = id;
+        this.shortUrl = shortUrl || UrlEntry.generateRandomBase32String(5);
         this.owner = owner;
-        this.shortUrl = shortUrl;
+        this.target = target;
         this.enabled = enabled;
+        this.createdTimestamp = createdTimestamp;
+        this.modifiedTimestamp = modifiedTimestamp;
+
     }
 
     static fromJson(obj: object): IUrlEntry {
         if (obj === undefined) return undefined;
-
-        let result = Object.assign(new IUrlEntry(), obj);
-
-        return result;
+        return new UrlEntry(obj);
     }
 
     private static generateRandomBase32String(codeLength: number) {

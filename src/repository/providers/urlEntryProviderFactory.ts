@@ -1,8 +1,6 @@
 import IUrlEntryProvider from "../../interfaces/iUrlEntryProvider";
-import IUrlEntry from "../../interfaces/iUrlEntry";
-import UrlEntry from "../../entities/urlEntry";
 import Config from "../../config";
-import UrlEntryProvider from "./urlEntryDynamoProvider";
+import UrlEntryNodenamoProvider from "./namoUrlProvider";
 
 export default class UrlEntryProviderFactory
 {
@@ -10,10 +8,10 @@ export default class UrlEntryProviderFactory
     {
         if(provider === Config.DATA_PROVIDER_AWS)
         {
-            return new UrlEntryProvider();
+            return new UrlEntryNodenamoProvider();
         }
         else if(provider=== Config.DATA_PROVIDER_LOCAL_DYNAMODB){
-            return new UrlEntryProvider({endpoint: Config.LOCAL_DYNAMODB_ENDPOINT});
+            return new UrlEntryNodenamoProvider({endpoint: Config.LOCAL_DYNAMODB_ENDPOINT});
         }
         else
         {
