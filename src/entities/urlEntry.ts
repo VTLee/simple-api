@@ -5,7 +5,6 @@ var crypto = require('crypto');
 
 export default class UrlEntry implements IUrlEntry {
     id: string;
-    shortUrl: string;
     owner: string;
     target: string;
     enabled: boolean;
@@ -14,18 +13,16 @@ export default class UrlEntry implements IUrlEntry {
 
     constructor({
         id,
-        shortUrl,
         owner,
         target,
         enabled,
         createdTimestamp,
         modifiedTimestamp
     }: {
-        id?: string, shortUrl?: string, owner?: string, target?: string,
+        id?: string, owner?: string, target?: string,
         enabled?: boolean, createdTimestamp?: string, modifiedTimestamp?: string
     } = {}) {
-        this.id = id;
-        this.shortUrl = shortUrl || UrlEntry.generateRandomBase32String(5);
+        this.id = id || UrlEntry.generateRandomBase32String(5);
         this.owner = owner;
         this.target = target;
         this.enabled = enabled;
@@ -39,7 +36,7 @@ export default class UrlEntry implements IUrlEntry {
         return new UrlEntry(obj);
     }
 
-    private static generateRandomBase32String(codeLength: number) {
+    public static generateRandomBase32String(codeLength: number) {
         let base32 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
         let code: string = "";
         let nowInMs = (new Date()).getTime();

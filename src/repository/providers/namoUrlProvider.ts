@@ -7,8 +7,6 @@ import UrlEntry from '../../entities/urlEntry';
 import IUrlEntryFilter from '../../interfaces/iUrlEntryFilter';
 import NodenamoUrlEntry from './decorators/namoUrlEntry';
 
-var validator = require('validator');
-
 export default class UrlEntryNodenamoProvider implements IUrlEntryProvider {
     private client: NodeNamo;
     private baseConfig;
@@ -40,7 +38,7 @@ export default class UrlEntryNodenamoProvider implements IUrlEntryProvider {
         return (
             await this.client.list()
                 .from(NodenamoUrlEntry)
-                .by(filter[Object.keys(filter).find(k => k != 'limit' && k != 'token' && filter[k] != undefined)])
+                .by(filter[Object.keys(filter).find(k => filter[k] != undefined)])
                 .execute<NodenamoUrlEntry>()
         ).items.map(e => UrlEntry.fromJson(e));
     }

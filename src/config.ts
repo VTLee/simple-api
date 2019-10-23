@@ -9,7 +9,7 @@ export default class Config
     public static DATA_PROVIDER = process.env.LIVE_DATA_PROVIDER || Config.DATA_PROVIDER_AWS;
 
     // Database
-    public static TABLE_NAME = process.env.TABLE_NAME || "shortUrls";
+    public static TABLE_NAME = process.env.TABLE_NAME || "table-name-nn-one";
     static readonly LOCAL_DYNAMODB_ENDPOINT = 'http://localhost:8000';
 
     // Misc

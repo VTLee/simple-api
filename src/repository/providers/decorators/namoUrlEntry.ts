@@ -8,9 +8,6 @@ export default class NodenamoUrlEntry {
     id: string;
 
     @DBColumn({ hash: true })
-    shortUrl: string; // a UUID of a user or an org.
-
-    @DBColumn({ hash: true })
     owner: string;
 
     @DBColumn()
@@ -28,18 +25,16 @@ export default class NodenamoUrlEntry {
 
     constructor({
         id,
-        shortUrl,
         owner,
         target,
         enabled,
         createdTimestamp,
         modifiedTimestamp
     }: {
-        id?: string, shortUrl?: string, owner?: string, target?: string,
+        id?: string, owner?: string, target?: string,
         enabled?: boolean, createdTimestamp?: string, modifiedTimestamp?: string
     } = {}) {
         this.id = id;
-        this.shortUrl = shortUrl;
         this.owner = owner;
         this.target = target;
         this.enabled = enabled;

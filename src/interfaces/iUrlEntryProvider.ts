@@ -1,7 +1,6 @@
 import IUrlEntry from "./iUrlEntry";
 import IUrlEntryFilter from "./iUrlEntryFilter";
 
-
 export default interface IUrlEntryProvider {
     add(entry: IUrlEntry): Promise<void>;
     getOne(id: string): Promise<IUrlEntry>;
