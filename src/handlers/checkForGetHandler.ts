@@ -14,7 +14,7 @@ export async function checkForGetHandler(event: IEvent,
     let um : IUrlEntryManager = new UrlEntryManager();
     let result = await um.getOne(target);
     console.log(`Result: ${JSON.stringify(result)}`)
-
+    event.request.method = 'get_v1_test'
     event.request.headers['OVERRIDE_RESPONSE'] = new Response(undefined, 301, { Location: result.target });
     return this.complete()
 };
